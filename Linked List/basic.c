@@ -27,12 +27,33 @@ void insertAtBeginning(int value, struct Node **head)
 
 }
 
+void insertAtEnd(int value, struct Node **head)
+{
+    struct Node *newNode = createNode(value);
+
+    if (*head == NULL)
+    {
+        *head = newNode;
+        return;
+    }
+    
+    struct Node *temp = *head;
+
+    while (temp->next) //It will access the NEXT memeber in temp and check whether if it is NULL. If it isn't, the loop is true.
+        temp = temp->next; //This updates the temp pointer, which will now point to NEXT Node.
+
+    temp->next = newNode; //This overwrites the NULL to new Node
+    
+}
+
 
 int main()
 {
     struct Node *head = NULL;
 
     insertAtBeginning(10, &head);
+    insertAtEnd(20, &head);
+    insertAtEnd(30, &head);
 
 
     return 0;
