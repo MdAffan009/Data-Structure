@@ -46,6 +46,18 @@ void insertAtEnd(int value, struct Node **head)
     
 }
 
+void displayList(struct Node *head)
+{
+    struct Node *temp = head;
+
+    while (temp)
+    {
+        printf(" %d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf(" NULL \n");
+}
+
 
 int main()
 {
@@ -53,8 +65,9 @@ int main()
 
     insertAtBeginning(10, &head);
     insertAtEnd(20, &head);
-    insertAtEnd(30, &head);
+    insertAtEnd(40, &head);
 
+    displayList(head);
 
     return 0;
 }
