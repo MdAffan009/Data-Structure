@@ -46,13 +46,54 @@ void insertAtEnd(int value, struct Node **head)
     
 }
 
+void insertAtPosition(int value, int index, struct Node **head)
+{
+    if (index < 0) return;
+
+    if (index == 0)
+    {
+        insertAtBeginning(value, head);
+        return;
+    }
+    
+    
+    struct Node *newNode = createNode(value);
+
+    if (*head == NULL)
+    {
+        printf("The List is Empty...\n");
+        free(newNode);
+        return;
+    }
+    
+    int count = 0;
+    struct Node *temp = *head;
+
+    while (temp != NULL && count < index - 1)
+    {
+        temp = temp->next;
+        count++;
+    }
+    
+    if (temp == NULL)
+    {
+        printf("Invalid Index!! \n");
+        free(newNode);
+        return;
+    }
+    
+    newNode->next = temp->next;
+    temp->next = newNode;
+
+}
+
 void displayList(struct Node *head)
 {
     struct Node *temp = head;
 
     while (temp)
     {
-        printf(" %d -> ", temp->data);
+        printf("%d -> ", temp->data);
         temp = temp->next;
     }
     printf(" NULL \n");
@@ -67,6 +108,8 @@ int main()
     insertAtEnd(20, &head);
     insertAtEnd(40, &head);
 
+    displayList(head);
+    insertAtPosition(30, 2, &head);
     displayList(head);
 
     return 0;
