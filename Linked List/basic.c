@@ -104,6 +104,7 @@ void deleteStart(struct Node **head)
 
 void deleteEnd(struct Node **head)
 {
+
     if (*head == NULL)
     {
         printf("List is empty.\n");
@@ -136,6 +137,56 @@ void deleteEnd(struct Node **head)
 
 }
 
+void deleteAtPosition(int index, struct Node **head)
+{
+    if (index < 0) return;
+
+    if (index == 0)
+    {
+        deleteStart(head);
+        return;
+    }
+
+    if (*head == NULL)
+    {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node *temp = *head;
+    int count = 0;
+
+    while (temp != NULL && count < index - 1)
+    {
+        temp = temp->next;
+        count++;
+    }   
+    
+    if (temp == NULL || temp->next == NULL)
+    {
+        printf("Invalid Index!! \n");
+        return;
+    }
+    
+
+    struct Node *nextNode = temp->next->next;
+
+    free(temp->next);
+    temp->next = nextNode;
+
+}
+
+void cleanup(struct Node **head)
+{
+    while (*head != NULL)
+    {
+        deleteStart(head);
+    }
+
+    printf("Cleanup Successful!! \n");
+
+}
+
 
 void displayList(struct Node *head)
 {
@@ -158,6 +209,9 @@ int main()
     insertAtBeginning(10, &head);
     insertAtEnd(20, &head);
     insertAtEnd(40, &head);
+    insertAtEnd(50, &head);
+    insertAtEnd(60, &head);
+    insertAtEnd(70, &head);
 
     displayList(head);
     insertAtPosition(30, 2, &head);
@@ -168,6 +222,11 @@ int main()
 
     deleteEnd(&head);
     displayList(head);
+
+    deleteAtPosition(1, &head);
+    displayList(head);
+
+    cleanup(&head);
 
     return 0;
 }
