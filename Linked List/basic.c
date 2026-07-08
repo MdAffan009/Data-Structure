@@ -87,6 +87,23 @@ void insertAtPosition(int value, int index, struct Node **head)
 
 }
 
+
+void deleteStart(struct Node **head)
+{
+    if (*head == NULL)
+    {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node *temp = *head;
+    *head = temp->next;
+    free(temp);
+
+}
+
+
+
 void displayList(struct Node *head)
 {
     struct Node *temp = head;
@@ -104,12 +121,16 @@ int main()
 {
     struct Node *head = NULL;
 
+
     insertAtBeginning(10, &head);
     insertAtEnd(20, &head);
     insertAtEnd(40, &head);
 
     displayList(head);
     insertAtPosition(30, 2, &head);
+    displayList(head);
+
+    deleteStart(&head);
     displayList(head);
 
     return 0;
