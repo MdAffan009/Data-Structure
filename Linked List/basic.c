@@ -102,6 +102,39 @@ void deleteStart(struct Node **head)
 
 }
 
+void deleteEnd(struct Node **head)
+{
+    if (*head == NULL)
+    {
+        printf("List is empty.\n");
+        return;
+    }
+    
+    struct Node *temp = *head;
+
+    if (temp->next == NULL)
+    {
+        *head = NULL;
+        free(temp);
+        return;
+    }
+    
+
+    while (temp->next)
+    {
+
+        if (temp->next->next == NULL) 
+        {
+            free(temp->next);
+            temp->next = NULL;
+            return;
+        }
+
+        temp = temp -> next;
+           
+    }
+
+}
 
 
 void displayList(struct Node *head)
@@ -131,6 +164,9 @@ int main()
     displayList(head);
 
     deleteStart(&head);
+    displayList(head);
+
+    deleteEnd(&head);
     displayList(head);
 
     return 0;
