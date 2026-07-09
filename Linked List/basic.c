@@ -17,42 +17,73 @@ struct Node* createNode(int value)
     return node;
 }
 
-void insertAtBeginning(int value, struct Node **head)
+int length(struct Node *head)
+{
+    struct Node *temp = head;
+
+    int count = 0;
+
+    while (temp)
+    {
+        temp = temp->next;
+        count++;
+    }
+
+    return count;
+    
+}
+
+void insertAtBeginning(int value, struct Node **head, struct Node **tail)
 {
     struct Node *newNode = createNode(value);
     struct Node *temp = *head;
 
-    *head = newNode;
-    newNode->next = temp;
+
+    if (length(*head) == 0)
+    {
+        *head = newNode;
+        *tail = newNode;
+
+        newNode->next = NULL;
+    }
+
+    else if (length(*head) == 1)
+    {
+        *head = newNode;
+        newNode->next = temp;
+        *tail = newNode->next;
+    }
+    
+    else
+    {
+        *head = newNode;
+        newNode->next = temp;
+    }
 
 }
 
-void insertAtEnd(int value, struct Node **head)
+void insertAtEnd(int value, struct Node **head, struct Node **tail)
 {
     struct Node *newNode = createNode(value);
 
     if (*head == NULL)
     {
-        *head = newNode;
+        insertAtBeginning(value, head, tail);
         return;
     }
-    
-    struct Node *temp = *head;
 
-    while (temp->next) //It will access the NEXT memeber in temp and check whether if it is NULL. If it isn't, the loop is true.
-        temp = temp->next; //This updates the temp pointer, which will now point to NEXT Node.
-
-    temp->next = newNode; //This overwrites the NULL to new Node
+    (*tail)->next = newNode; //This overwrites the NULL to new Node
+    *tail = newNode;
     
 }
 
-void insertAtPosition(int value, int index, struct Node **head)
+void insertAtPosition(int value, int index, struct Node **head, struct Node **tail)
 {
     if (index < 0) return;
 
     if (index == 0)
     {
-        insertAtBeginning(value, head);
+        insertAtBeginning(value, head, tail);
         return;
     }
     
@@ -188,23 +219,6 @@ void cleanup(struct Node **head)
 }
 
 
-int length(struct Node *head)
-{
-    struct Node *temp = head;
-
-    int count = 0;
-
-    while (temp)
-    {
-        temp = temp->next;
-        count++;
-    }
-
-    return count;
-    
-}
-
-
 void displayList(struct Node *head)
 {
     struct Node *temp = head;
@@ -221,31 +235,21 @@ void displayList(struct Node *head)
 int main()
 {
     struct Node *head = NULL;
+    struct Node *tail = NULL;
 
+    insertAtBeginning(20, &head, &tail);
 
-    insertAtBeginning(10, &head);
-    insertAtEnd(20, &head);
-    insertAtEnd(40, &head);
-    insertAtEnd(50, &head);
-    insertAtEnd(60, &head);
-    insertAtEnd(70, &head);
+    insertAtEnd(30, &head, &tail);
+    insertAtEnd(50, &head, &tail);
+
+    insertAtBeginning(10, &head, &tail);
+
+    insertAtPosition(40, 3, &head, &tail);
 
     displayList(head);
-    insertAtPosition(30, 2, &head);
-    displayList(head);
 
-    deleteStart(&head);
-    displayList(head);
-
-    deleteEnd(&head);
-    displayList(head);
-
-    deleteAtPosition(1, &head);
-    displayList(head);
-    
-
-    printf("The length of Linked List is %d \n", length(head));
-
+    printf("%d and %d \n", head->data, tail->data);
+   
     cleanup(&head);
 
     return 0;
