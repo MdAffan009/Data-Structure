@@ -188,6 +188,23 @@ void cleanup(struct Node **head)
 }
 
 
+int length(struct Node *head)
+{
+    struct Node *temp = head;
+
+    int count = 0;
+
+    while (temp)
+    {
+        temp = temp->next;
+        count++;
+    }
+
+    return count;
+    
+}
+
+
 void displayList(struct Node *head)
 {
     struct Node *temp = head;
@@ -197,7 +214,7 @@ void displayList(struct Node *head)
         printf("%d -> ", temp->data);
         temp = temp->next;
     }
-    printf(" NULL \n");
+    printf("NULL \n");
 }
 
 
@@ -225,6 +242,9 @@ int main()
 
     deleteAtPosition(1, &head);
     displayList(head);
+    
+
+    printf("The length of Linked List is %d \n", length(head));
 
     cleanup(&head);
 
