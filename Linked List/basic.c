@@ -39,38 +39,32 @@ void insertAtBeginning(int value, struct Node **head, struct Node **tail)
     struct Node *temp = *head;
 
 
-    if (length(*head) == 0)
+    if (*head == NULL)
     {
         *head = newNode;
         *tail = newNode;
 
         newNode->next = NULL;
     }
-
-    else if (length(*head) == 1)
-    {
-        *head = newNode;
-        newNode->next = temp;
-        *tail = newNode->next;
-    }
     
     else
     {
+        newNode->next = *head;
         *head = newNode;
-        newNode->next = temp;
     }
 
 }
 
 void insertAtEnd(int value, struct Node **head, struct Node **tail)
 {
-    struct Node *newNode = createNode(value);
 
     if (*head == NULL)
     {
         insertAtBeginning(value, head, tail);
         return;
     }
+
+    struct Node *newNode = createNode(value);
 
     (*tail)->next = newNode; //This overwrites the NULL to new Node
     *tail = newNode;
@@ -116,10 +110,12 @@ void insertAtPosition(int value, int index, struct Node **head, struct Node **ta
     newNode->next = temp->next;
     temp->next = newNode;
 
+    if (newNode->next == NULL) *tail = newNode;
+
 }
 
 
-void deleteStart(struct Node **head)
+void deleteStart(struct Node **head, struct Node **tail)
 {
     if (*head == NULL)
     {
@@ -129,11 +125,14 @@ void deleteStart(struct Node **head)
 
     struct Node *temp = *head;
     *head = temp->next;
+
+     if (*head == NULL) *tail = NULL;
+
     free(temp);
 
 }
 
-void deleteEnd(struct Node **head)
+void deleteEnd(struct Node **head, struct Node **tail)
 {
 
     if (*head == NULL)
@@ -147,6 +146,8 @@ void deleteEnd(struct Node **head)
     if (temp->next == NULL)
     {
         *head = NULL;
+        *tail = NULL;
+
         free(temp);
         return;
     }
@@ -159,6 +160,7 @@ void deleteEnd(struct Node **head)
         {
             free(temp->next);
             temp->next = NULL;
+            *tail = temp;
             return;
         }
 
@@ -168,13 +170,13 @@ void deleteEnd(struct Node **head)
 
 }
 
-void deleteAtPosition(int index, struct Node **head)
+void deleteAtPosition(int index, struct Node **head, struct Node **tail)
 {
     if (index < 0) return;
 
     if (index == 0)
     {
-        deleteStart(head);
+        deleteStart(head, tail);
         return;
     }
 
@@ -200,18 +202,21 @@ void deleteAtPosition(int index, struct Node **head)
     }
     
 
-    struct Node *nextNode = temp->next->next;
+    struct Node *toDelete = temp->next;
+    struct Node *nextNode = toDelete->next;
 
-    free(temp->next);
+    if (nextNode == NULL)  *tail = temp; //We just deleted the Last Node
+
+    free(toDelete);
     temp->next = nextNode;
 
 }
 
-void cleanup(struct Node **head)
+void cleanup(struct Node **head, struct Node **tail)
 {
     while (*head != NULL)
     {
-        deleteStart(head);
+        deleteStart(head, tail);
     }
 
     printf("Cleanup Successful!! \n");
@@ -241,16 +246,28 @@ int main()
 
     insertAtEnd(30, &head, &tail);
     insertAtEnd(50, &head, &tail);
+    insertAtEnd(60, &head, &tail);
+    insertAtEnd(70, &head, &tail);
 
     insertAtBeginning(10, &head, &tail);
 
+    displayList(head);
     insertAtPosition(40, 3, &head, &tail);
-
     displayList(head);
 
-    printf("%d and %d \n", head->data, tail->data);
+    deleteStart(&head, &tail);
+    displayList(head);
+
+    deleteEnd(&head, &tail);
+    displayList(head);
+
+    deleteAtPosition(1, &head, &tail);
+    displayList(head);
+    
+
+    printf("The length of Linked List is %d \n", length(head));
    
-    cleanup(&head);
+    cleanup(&head, &tail);
 
     return 0;
 }
