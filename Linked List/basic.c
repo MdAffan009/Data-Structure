@@ -1,15 +1,15 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-struct Node
+typedef struct Node
 {
     int data;
     struct Node *next;
-};
+} Node;
 
-struct Node* createNode(int value)
+Node *createNode(int value)
 {
-    struct Node *node = malloc(sizeof(struct Node));
+    Node *node = malloc(sizeof(Node));
 
     node->data = value;
     node->next = NULL;
@@ -17,9 +17,9 @@ struct Node* createNode(int value)
     return node;
 }
 
-int length(struct Node *head)
+int length(Node *head)
 {
-    struct Node *temp = head;
+    Node *temp = head;
 
     int count = 0;
 
@@ -30,14 +30,12 @@ int length(struct Node *head)
     }
 
     return count;
-    
 }
 
-void insertAtBeginning(int value, struct Node **head, struct Node **tail)
+void insertAtBeginning(int value, Node **head, Node **tail)
 {
-    struct Node *newNode = createNode(value);
-    struct Node *temp = *head;
-
+    Node *newNode = createNode(value);
+    Node *temp = *head;
 
     if (*head == NULL)
     {
@@ -46,16 +44,15 @@ void insertAtBeginning(int value, struct Node **head, struct Node **tail)
 
         newNode->next = NULL;
     }
-    
+
     else
     {
         newNode->next = *head;
         *head = newNode;
     }
-
 }
 
-void insertAtEnd(int value, struct Node **head, struct Node **tail)
+void insertAtEnd(int value, Node **head, Node **tail)
 {
 
     if (*head == NULL)
@@ -64,25 +61,24 @@ void insertAtEnd(int value, struct Node **head, struct Node **tail)
         return;
     }
 
-    struct Node *newNode = createNode(value);
+    Node *newNode = createNode(value);
 
-    (*tail)->next = newNode; //This overwrites the NULL to new Node
+    (*tail)->next = newNode; // This overwrites the NULL to new Node
     *tail = newNode;
-    
 }
 
-void insertAtPosition(int value, int index, struct Node **head, struct Node **tail)
+void insertAtPosition(int value, int index, Node **head, Node **tail)
 {
-    if (index < 0) return;
+    if (index < 0)
+        return;
 
     if (index == 0)
     {
         insertAtBeginning(value, head, tail);
         return;
     }
-    
-    
-    struct Node *newNode = createNode(value);
+
+    Node *newNode = createNode(value);
 
     if (*head == NULL)
     {
@@ -90,32 +86,31 @@ void insertAtPosition(int value, int index, struct Node **head, struct Node **ta
         free(newNode);
         return;
     }
-    
+
     int count = 0;
-    struct Node *temp = *head;
+    Node *temp = *head;
 
     while (temp != NULL && count < index - 1)
     {
         temp = temp->next;
         count++;
     }
-    
+
     if (temp == NULL)
     {
         printf("Invalid Index!! \n");
         free(newNode);
         return;
     }
-    
+
     newNode->next = temp->next;
     temp->next = newNode;
 
-    if (newNode->next == NULL) *tail = newNode;
-
+    if (newNode->next == NULL)
+        *tail = newNode;
 }
 
-
-void deleteStart(struct Node **head, struct Node **tail)
+void deleteStart(Node **head, Node **tail)
 {
     if (*head == NULL)
     {
@@ -123,16 +118,16 @@ void deleteStart(struct Node **head, struct Node **tail)
         return;
     }
 
-    struct Node *temp = *head;
+    Node *temp = *head;
     *head = temp->next;
 
-     if (*head == NULL) *tail = NULL;
+    if (*head == NULL)
+        *tail = NULL;
 
     free(temp);
-
 }
 
-void deleteEnd(struct Node **head, struct Node **tail)
+void deleteEnd(Node **head, Node **tail)
 {
 
     if (*head == NULL)
@@ -140,8 +135,8 @@ void deleteEnd(struct Node **head, struct Node **tail)
         printf("List is empty.\n");
         return;
     }
-    
-    struct Node *temp = *head;
+
+    Node *temp = *head;
 
     if (temp->next == NULL)
     {
@@ -151,12 +146,11 @@ void deleteEnd(struct Node **head, struct Node **tail)
         free(temp);
         return;
     }
-    
 
     while (temp->next)
     {
 
-        if (temp->next->next == NULL) 
+        if (temp->next->next == NULL)
         {
             free(temp->next);
             temp->next = NULL;
@@ -164,15 +158,14 @@ void deleteEnd(struct Node **head, struct Node **tail)
             return;
         }
 
-        temp = temp -> next;
-           
+        temp = temp->next;
     }
-
 }
 
-void deleteAtPosition(int index, struct Node **head, struct Node **tail)
+void deleteAtPosition(int index, Node **head, Node **tail)
 {
-    if (index < 0) return;
+    if (index < 0)
+        return;
 
     if (index == 0)
     {
@@ -186,36 +179,35 @@ void deleteAtPosition(int index, struct Node **head, struct Node **tail)
         return;
     }
 
-    struct Node *temp = *head;
+    Node *temp = *head;
     int count = 0;
 
     while (temp != NULL && count < index - 1)
     {
         temp = temp->next;
         count++;
-    }   
-    
+    }
+
     if (temp == NULL || temp->next == NULL)
     {
         printf("Invalid Index!! \n");
         return;
     }
-    
 
-    struct Node *toDelete = temp->next;
-    struct Node *nextNode = toDelete->next;
+    Node *toDelete = temp->next;
+    Node *nextNode = toDelete->next;
 
-    if (nextNode == NULL)  *tail = temp; //We just deleted the Last Node
+    if (nextNode == NULL)
+        *tail = temp; // We just deleted the Last Node
 
     free(toDelete);
     temp->next = nextNode;
-
 }
 
-void search(int value, struct Node *head)
+void search(int value, Node *head)
 {
     int count = 0;
-    struct Node *temp = head;
+    Node *temp = head;
 
     while (temp)
     {
@@ -228,13 +220,14 @@ void search(int value, struct Node *head)
         temp = temp->next;
         count++;
     }
-    
+
     printf("Element not found \n");
 }
 
-void update(int value, int index, struct Node *head)
+void update(int value, int index, Node *head)
 {
-    if (index < 0) return;
+    if (index < 0)
+        return;
 
     if (head == NULL)
     {
@@ -243,14 +236,14 @@ void update(int value, int index, struct Node *head)
     }
 
     int count = 0;
-    struct Node *temp = head;
+    Node *temp = head;
 
     while (temp != NULL && count < index)
     {
         temp = temp->next;
         count++;
     }
-    
+
     if (temp == NULL)
     {
         printf("Invalid Index!! \n");
@@ -258,11 +251,29 @@ void update(int value, int index, struct Node *head)
     }
 
     temp->data = value;
-
 }
 
+void reverse(Node **head, Node **tail)
+{
+    Node *prev = NULL;
+    Node *curr = *head;
 
-void cleanup(struct Node **head, struct Node **tail)
+    while (curr != NULL)
+    {
+        Node *next = curr->next; // Points to next node
+
+        curr->next = prev; // Points to previous node
+
+        prev = curr; // Moves previous node to current node
+
+        curr = next; // Moves current node to next node
+    }
+
+    *tail = *head;
+    *head = prev;
+}
+
+void cleanup(Node **head, Node **tail)
 {
     while (*head != NULL)
     {
@@ -270,13 +281,11 @@ void cleanup(struct Node **head, struct Node **tail)
     }
 
     printf("Cleanup Successful!! \n");
-
 }
 
-
-void displayList(struct Node *head)
+void displayList(Node *head)
 {
-    struct Node *temp = head;
+    Node *temp = head;
 
     while (temp)
     {
@@ -286,11 +295,10 @@ void displayList(struct Node *head)
     printf("NULL \n");
 }
 
-
 int main()
 {
-    struct Node *head = NULL;
-    struct Node *tail = NULL;
+    Node *head = NULL;
+    Node *tail = NULL;
 
     insertAtBeginning(20, &head, &tail);
 
@@ -317,10 +325,24 @@ int main()
     search(60, head);
     update(55, 2, head);
     displayList(head);
-    
 
     printf("The length of Linked List is %d \n", length(head));
-   
+
+    cleanup(&head, &tail);
+
+    printf("\n");
+    printf("------------------------------------------------------------------------------------\n\n");
+
+    insertAtBeginning(2, &head, &tail);
+    insertAtEnd(4, &head, &tail);
+    insertAtEnd(6, &head, &tail);
+    insertAtEnd(8, &head, &tail);
+    insertAtEnd(10, &head, &tail);
+
+    displayList(head);
+    reverse(&head, &tail);
+    displayList(head);
+
     cleanup(&head, &tail);
 
     return 0;
