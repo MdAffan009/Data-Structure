@@ -212,6 +212,56 @@ void deleteAtPosition(int index, struct Node **head, struct Node **tail)
 
 }
 
+void search(int value, struct Node *head)
+{
+    int count = 0;
+    struct Node *temp = head;
+
+    while (temp)
+    {
+        if (temp->data == value)
+        {
+            printf("Element found at %d index \n", count);
+            return;
+        }
+
+        temp = temp->next;
+        count++;
+    }
+    
+    printf("Element not found \n");
+}
+
+void update(int value, int index, struct Node *head)
+{
+    if (index < 0) return;
+
+    if (head == NULL)
+    {
+        printf("List is empty.\n");
+        return;
+    }
+
+    int count = 0;
+    struct Node *temp = head;
+
+    while (temp != NULL && count < index)
+    {
+        temp = temp->next;
+        count++;
+    }
+    
+    if (temp == NULL)
+    {
+        printf("Invalid Index!! \n");
+        return;
+    }
+
+    temp->data = value;
+
+}
+
+
 void cleanup(struct Node **head, struct Node **tail)
 {
     while (*head != NULL)
@@ -262,6 +312,10 @@ int main()
     displayList(head);
 
     deleteAtPosition(1, &head, &tail);
+    displayList(head);
+
+    search(60, head);
+    update(55, 2, head);
     displayList(head);
     
 
