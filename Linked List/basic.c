@@ -215,10 +215,10 @@ void deleteAtPosition(int index, LinkedList *list)
     list->size--;
 }
 
-void search(int value, Node *head)
+void search(int value, LinkedList *list)
 {
     int count = 0;
-    Node *temp = head;
+    Node *temp = list->head;
 
     while (temp)
     {
@@ -235,19 +235,19 @@ void search(int value, Node *head)
     printf("Element not found \n");
 }
 
-void update(int value, int index, Node *head)
+void update(int value, int index, LinkedList *list)
 {
     if (index < 0)
         return;
 
-    if (head == NULL)
+    if (list->head == NULL)
     {
         printf("List is empty.\n");
         return;
     }
 
     int count = 0;
-    Node *temp = head;
+    Node *temp = list->head;
 
     while (temp != NULL && count < index)
     {
@@ -264,10 +264,10 @@ void update(int value, int index, Node *head)
     temp->data = value;
 }
 
-void reverse(Node **head, Node **tail)
+void reverse(LinkedList *list)
 {
     Node *prev = NULL;
-    Node *curr = *head;
+    Node *curr = list->head;
 
     while (curr != NULL)
     {
@@ -280,8 +280,8 @@ void reverse(Node **head, Node **tail)
         curr = next; // Moves current node to next node
     }
 
-    *tail = *head;
-    *head = prev;
+    list->tail = list->head;
+    list->head = prev;
 }
 
 void cleanup(LinkedList *list)
@@ -322,6 +322,17 @@ int main()
     deleteStart(&List);
     deleteEnd(&List);
     deleteAtPosition(1, &List);
+
+    displayList(&List);
+
+    search(30, &List);
+    update(20, 1, &List);
+
+    displayList(&List);
+
+    printf("\n");
+
+    reverse(&List);
 
     displayList(&List);
 
