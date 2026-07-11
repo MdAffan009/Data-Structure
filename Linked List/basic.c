@@ -30,55 +30,58 @@ int length(LinkedList *list)
     return list->size;
 }
 
-void insertAtBeginning(int value, Node **head, Node **tail)
+void insertAtBeginning(int value, LinkedList *list)
 {
     Node *newNode = createNode(value);
-    Node *temp = *head;
+    Node *temp = list->head;
 
-    if (*head == NULL)
+    if (list->head == NULL)
     {
-        *head = newNode;
-        *tail = newNode;
+        list->head = newNode;
+        list->tail = newNode;
 
         newNode->next = NULL;
     }
 
     else
     {
-        newNode->next = *head;
-        *head = newNode;
+        newNode->next = list->head;
+        list->head = newNode;
     }
+
+    list->size++;
 }
 
-void insertAtEnd(int value, Node **head, Node **tail)
+void insertAtEnd(int value, LinkedList *list)
 {
 
-    if (*head == NULL)
+    if (list->head == NULL)
     {
-        insertAtBeginning(value, head, tail);
+        insertAtBeginning(10, list);
         return;
     }
 
     Node *newNode = createNode(value);
 
-    (*tail)->next = newNode; // This overwrites the NULL to new Node
-    *tail = newNode;
+    list->tail->next = newNode; // This overwrites the NULL to new Node
+    list->tail = newNode;
+    list->size++;
 }
 
-void insertAtPosition(int value, int index, Node **head, Node **tail)
+void insertAtPosition(int value, int index, LinkedList *list)
 {
     if (index < 0)
         return;
 
     if (index == 0)
     {
-        insertAtBeginning(value, head, tail);
+        insertAtBeginning(10, list);
         return;
     }
 
     Node *newNode = createNode(value);
 
-    if (*head == NULL)
+    if (list->head == NULL)
     {
         printf("The List is Empty...\n");
         free(newNode);
@@ -86,7 +89,7 @@ void insertAtPosition(int value, int index, Node **head, Node **tail)
     }
 
     int count = 0;
-    Node *temp = *head;
+    Node *temp = list->head;
 
     while (temp != NULL && count < index - 1)
     {
@@ -103,9 +106,10 @@ void insertAtPosition(int value, int index, Node **head, Node **tail)
 
     newNode->next = temp->next;
     temp->next = newNode;
+    list->size++;
 
     if (newNode->next == NULL)
-        *tail = newNode;
+        list->tail = newNode;
 }
 
 void deleteStart(Node **head, Node **tail)
@@ -281,9 +285,9 @@ void cleanup(Node **head, Node **tail)
     printf("Cleanup Successful!! \n");
 }
 
-void displayList(Node *head)
+void displayList(LinkedList *list)
 {
-    Node *temp = head;
+    Node *temp = list->head;
 
     while (temp)
     {
@@ -297,7 +301,11 @@ int main()
 {
     LinkedList List = {NULL, NULL, 0};
 
+    insertAtBeginning(10, &List);
+    insertAtEnd(30, &List);
+    insertAtPosition(20, 1, &List);
 
+    displayList(&List);
 
     printf("The length of Linked List is %d \n", length(&List));
 
