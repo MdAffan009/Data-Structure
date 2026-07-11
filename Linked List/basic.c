@@ -7,6 +7,14 @@ typedef struct Node
     struct Node *next;
 } Node;
 
+typedef struct LinkedList
+{
+    Node *head;
+    Node *tail;
+    size_t size;
+} LinkedList;
+
+
 Node *createNode(int value)
 {
     Node *node = malloc(sizeof(Node));
@@ -17,19 +25,9 @@ Node *createNode(int value)
     return node;
 }
 
-int length(Node *head)
+int length(LinkedList *list)
 {
-    Node *temp = head;
-
-    int count = 0;
-
-    while (temp)
-    {
-        temp = temp->next;
-        count++;
-    }
-
-    return count;
+    return list->size;
 }
 
 void insertAtBeginning(int value, Node **head, Node **tail)
@@ -297,53 +295,11 @@ void displayList(Node *head)
 
 int main()
 {
-    Node *head = NULL;
-    Node *tail = NULL;
+    LinkedList List = {NULL, NULL, 0};
 
-    insertAtBeginning(20, &head, &tail);
 
-    insertAtEnd(30, &head, &tail);
-    insertAtEnd(50, &head, &tail);
-    insertAtEnd(60, &head, &tail);
-    insertAtEnd(70, &head, &tail);
 
-    insertAtBeginning(10, &head, &tail);
-
-    displayList(head);
-    insertAtPosition(40, 3, &head, &tail);
-    displayList(head);
-
-    deleteStart(&head, &tail);
-    displayList(head);
-
-    deleteEnd(&head, &tail);
-    displayList(head);
-
-    deleteAtPosition(1, &head, &tail);
-    displayList(head);
-
-    search(60, head);
-    update(55, 2, head);
-    displayList(head);
-
-    printf("The length of Linked List is %d \n", length(head));
-
-    cleanup(&head, &tail);
-
-    printf("\n");
-    printf("------------------------------------------------------------------------------------\n\n");
-
-    insertAtBeginning(2, &head, &tail);
-    insertAtEnd(4, &head, &tail);
-    insertAtEnd(6, &head, &tail);
-    insertAtEnd(8, &head, &tail);
-    insertAtEnd(10, &head, &tail);
-
-    displayList(head);
-    reverse(&head, &tail);
-    displayList(head);
-
-    cleanup(&head, &tail);
+    printf("The length of Linked List is %d \n", length(&List));
 
     return 0;
 }
