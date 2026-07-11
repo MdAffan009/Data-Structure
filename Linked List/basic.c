@@ -14,10 +14,15 @@ typedef struct LinkedList
     size_t size;
 } LinkedList;
 
-
 Node *createNode(int value)
 {
     Node *node = malloc(sizeof(Node));
+
+    if (node == NULL)
+    {
+        fprintf(stderr, "Out of memory\n");
+        exit(EXIT_FAILURE);
+    }
 
     node->data = value;
     node->next = NULL;
@@ -33,7 +38,6 @@ int length(LinkedList *list)
 void insertAtBeginning(int value, LinkedList *list)
 {
     Node *newNode = createNode(value);
-    Node *temp = list->head;
 
     if (list->head == NULL)
     {
@@ -57,7 +61,7 @@ void insertAtEnd(int value, LinkedList *list)
 
     if (list->head == NULL)
     {
-        insertAtBeginning(10, list);
+        insertAtBeginning(value, list);
         return;
     }
 
@@ -75,7 +79,7 @@ void insertAtPosition(int value, int index, LinkedList *list)
 
     if (index == 0)
     {
-        insertAtBeginning(10, list);
+        insertAtBeginning(value, list);
         return;
     }
 
@@ -168,7 +172,6 @@ void deleteEnd(LinkedList *list)
 
         temp = temp->next;
     }
-
 }
 
 void deleteAtPosition(int index, LinkedList *list)
