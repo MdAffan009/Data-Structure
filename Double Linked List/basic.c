@@ -3,6 +3,7 @@
 
 typedef struct Node
 {
+    struct Node *prev;
     int data;
     struct Node *next;
 } Node;
@@ -24,6 +25,7 @@ Node *createNode(int value)
         exit(EXIT_FAILURE);
     }
 
+    node->prev = NULL;
     node->data = value;
     node->next = NULL;
 
@@ -45,11 +47,13 @@ void insertAtBeginning(int value, LinkedList *list)
         list->tail = newNode;
 
         newNode->next = NULL;
+        newNode->prev = NULL;
     }
 
     else
     {
         newNode->next = list->head;
+        list->head->prev = newNode;
         list->head = newNode;
     }
 
@@ -68,6 +72,7 @@ void insertAtEnd(int value, LinkedList *list)
     Node *newNode = createNode(value);
 
     list->tail->next = newNode; // This overwrites the NULL to new Node
+    newNode->prev = list->tail;
     list->tail = newNode;
     list->size++;
 }
@@ -108,8 +113,13 @@ void insertAtPosition(int value, int index, LinkedList *list)
         return;
     }
 
+
+    temp->next->prev = newNode;
     newNode->next = temp->next;
+
     temp->next = newNode;
+    newNode->prev = temp;
+
     list->size++;
 
     if (newNode->next == NULL)
@@ -307,35 +317,32 @@ void displayList(LinkedList *list)
         temp = temp->next;
     }
     printf("NULL \n");
+
+    //List in reverse  
+    temp = list->tail;
+
+    while (temp)
+    {
+        printf("%d -> ", temp->data);
+        temp = temp->prev;
+    }
+    printf("NULL \n");
+
+
 }
+
 
 int main()
 {
     LinkedList List = {NULL, NULL, 0};
 
+    insertAtBeginning(30, &List);
+    insertAtBeginning(20, &List);
     insertAtBeginning(10, &List);
-    insertAtEnd(30, &List);
-    insertAtEnd(40, &List);
+
     insertAtEnd(50, &List);
-    insertAtPosition(20, 1, &List);
-    insertAtBeginning(5, &List);
 
-    displayList(&List);
-
-    deleteStart(&List);
-    deleteEnd(&List);
-    deleteAtPosition(1, &List);
-
-    displayList(&List);
-
-    search(30, &List);
-    update(20, 1, &List);
-
-    displayList(&List);
-
-    printf("\n");
-
-    reverse(&List);
+    insertAtPosition(40, 3, &List);
 
     displayList(&List);
 
