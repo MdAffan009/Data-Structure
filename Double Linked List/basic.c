@@ -280,24 +280,45 @@ void update(int value, int index, LinkedList *list)
     temp->data = value;
 }
 
-void reverse(LinkedList *list)
+void reverseList(LinkedList *list)
 {
-    Node *prev = NULL;
+    
     Node *curr = list->head;
 
     while (curr != NULL)
     {
         Node *next = curr->next; // Points to next node
 
-        curr->next = prev; // Points to previous node
+        curr->next = curr->prev; // Points to previous node
 
-        prev = curr; // Moves previous node to current node
+        curr->prev = next; // Moves previous node to current node
 
         curr = next; // Moves current node to next node
     }
 
-    list->tail = list->head;
-    list->head = prev;
+    Node *temp = list->head;
+    list->head = list->tail;
+    list->tail = temp;
+}
+
+
+void reverse(LinkedList *list)
+{
+
+    Node *left = list->head;
+    Node *right = list->tail;
+
+    for (int i = 0; i < list->size / 2; i++)
+    {
+        int temp = left->data;
+        left->data = right->data;
+        right->data = temp;
+
+        left = left->next;
+        right = right->prev;
+        
+    }
+    
 }
 
 void cleanup(LinkedList *list)
@@ -359,6 +380,10 @@ int main()
     deleteAtPosition(6, &List);
     deleteEnd(&List);
 
+    displayList(&List);
+
+    printf("\n");
+    reverseList(&List);
     displayList(&List);
     
     printf("The length of Linked List is %d \n", length(&List));
