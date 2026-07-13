@@ -136,6 +136,8 @@ void deleteStart(LinkedList *list)
 
     Node *temp = list->head;
     list->head = temp->next;
+    
+    if (list->head != NULL) list->head->prev = NULL;
 
     if (list->head == NULL)
         list->tail = NULL;
@@ -224,6 +226,7 @@ void deleteAtPosition(int index, LinkedList *list)
 
     free(toDelete);
     temp->next = nextNode;
+    nextNode->prev = temp;
 
     list->size--;
 }
@@ -318,15 +321,15 @@ void displayList(LinkedList *list)
     }
     printf("NULL \n");
 
-    //List in reverse  
-    temp = list->tail;
+    // List in reverse  
+    // temp = list->tail;
 
-    while (temp)
-    {
-        printf("%d -> ", temp->data);
-        temp = temp->prev;
-    }
-    printf("NULL \n");
+    // while (temp)
+    // {
+    //     printf("%d -> ", temp->data);
+    //     temp = temp->prev;
+    // }
+    // printf("NULL \n");
 
 
 }
@@ -344,8 +347,20 @@ int main()
 
     insertAtPosition(40, 3, &List);
 
+    insertAtEnd(55, &List);
+    insertAtEnd(66, &List);
+    insertAtPosition(60, 5, &List);
+    insertAtBeginning(5, &List);
+    
+    
     displayList(&List);
 
+    deleteStart(&List);
+    deleteAtPosition(6, &List);
+    deleteEnd(&List);
+
+    displayList(&List);
+    
     printf("The length of Linked List is %d \n", length(&List));
 
     cleanup(&List);
