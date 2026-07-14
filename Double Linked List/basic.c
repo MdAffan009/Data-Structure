@@ -32,7 +32,7 @@ Node *createNode(int value)
     return node;
 }
 
-int length(LinkedList *list)
+size_t length(LinkedList *list)
 {
     return list->size;
 }
@@ -79,12 +79,21 @@ void insertAtEnd(int value, LinkedList *list)
 
 void insertAtPosition(int value, int index, LinkedList *list)
 {
-    if (index < 0)
+    if (index > list->size)
+    {
+        printf("Invalid Index!! \n");
         return;
+    }
 
     if (index == 0)
     {
         insertAtBeginning(value, list);
+        return;
+    }
+
+    if (index == list->size)
+    {
+        insertAtEnd(value, list);
         return;
     }
 
@@ -97,28 +106,44 @@ void insertAtPosition(int value, int index, LinkedList *list)
         return;
     }
 
-    int count = 0;
-    Node *temp = list->head;
+    int mid = list->size / 2;
+    int dir = mid - index;
 
-    while (temp != NULL && count < index - 1)
+    if (dir >= 0)
     {
-        temp = temp->next;
-        count++;
+        int count = 0;
+        Node *temp = list->head;
+
+        while (count != mid && count < index - 1)
+        {
+            temp = temp->next;
+            count++;
+        }
+
+        temp->next->prev = newNode;
+        newNode->next = temp->next;
+
+        temp->next = newNode;
+        newNode->prev = temp;
     }
 
-    if (temp == NULL)
+    else
     {
-        printf("Invalid Index!! \n");
-        free(newNode);
-        return;
+        int count = list->size;
+        Node *temp = list->tail;
+
+        while (count > mid && count > index + 1)
+        {
+            temp = temp->prev;
+            count--;
+        }
+
+        temp->prev->next = newNode;
+        newNode->prev = temp->prev;
+
+        newNode->next = temp;
+        temp->prev = newNode;
     }
-
-
-    temp->next->prev = newNode;
-    newNode->next = temp->next;
-
-    temp->next = newNode;
-    newNode->prev = temp;
 
     list->size++;
 
@@ -136,8 +161,9 @@ void deleteStart(LinkedList *list)
 
     Node *temp = list->head;
     list->head = temp->next;
-    
-    if (list->head != NULL) list->head->prev = NULL;
+
+    if (list->head != NULL)
+        list->head->prev = NULL;
 
     if (list->head == NULL)
         list->tail = NULL;
@@ -156,44 +182,43 @@ void deleteEnd(LinkedList *list)
         return;
     }
 
-    Node *temp = list->head;
-
-    if (temp->next == NULL)
+    if (list->head == list->tail)
     {
+        free(list->head);
+
         list->head = NULL;
         list->tail = NULL;
-
-        free(temp);
 
         list->size--;
         return;
     }
 
-    while (temp->next)
-    {
+    Node *temp = list->tail->prev;
 
-        if (temp->next->next == NULL)
-        {
-            free(temp->next);
-            temp->next = NULL;
-            list->tail = temp;
+    free(temp->next);
+    temp->next = NULL;
+    list->tail = temp;
 
-            list->size--;
-            return;
-        }
-
-        temp = temp->next;
-    }
+    list->size--;
 }
 
 void deleteAtPosition(int index, LinkedList *list)
 {
-    if (index < 0)
+    if (index >= list->size - 1)
+    {
+        printf("Invalid Index!! \n");
         return;
+    }
 
     if (index == 0)
     {
         deleteStart(list);
+        return;
+    }
+
+    if (index == list->size)
+    {
+        deleteEnd(list);
         return;
     }
 
@@ -203,30 +228,66 @@ void deleteAtPosition(int index, LinkedList *list)
         return;
     }
 
-    Node *temp = list->head;
-    int count = 0;
+    int mid = list->size / 2;
+    int dir = mid - index;
 
-    while (temp != NULL && count < index - 1)
+    if (dir >= 0)
     {
-        temp = temp->next;
-        count++;
+        int count = 0;
+        Node *temp = list->head;
+
+        while (count != mid && count < index - 1)
+        {
+            temp = temp->next;
+            count++;
+        }
+
+        Node *toDelete = temp->next;
+        Node *nextNode = toDelete->next;
+
+        free(toDelete);
+
+        if (nextNode != NULL)
+        {
+            temp->next = nextNode;
+            nextNode->prev = temp;
+        }
+
+        else
+        {
+            list->tail = temp;
+            temp->next = NULL;
+        }
     }
 
-    if (temp == NULL || temp->next == NULL)
+    else
     {
-        printf("Invalid Index!! \n");
-        return;
+        int count = list->size;
+        Node *temp = list->tail;
+
+        while (count > mid && count > index + 1)
+        {
+            temp = temp->prev;
+            count--;
+        }
+
+        Node *toDelete = temp->prev;
+        Node *nextNode = toDelete->prev;
+
+        free(toDelete);
+
+        if (nextNode != NULL)
+        {
+            temp->prev = nextNode;
+            nextNode->next = temp;
+        }
+
+        else
+        {
+            list->head = temp;
+            temp->prev = NULL;
+        }
     }
-
-    Node *toDelete = temp->next;
-    Node *nextNode = toDelete->next;
-
-    if (nextNode == NULL)
-        list->tail = temp; // We just deleted the Last Node
-
-    free(toDelete);
-    temp->next = nextNode;
-    nextNode->prev = temp;
 
     list->size--;
 }
@@ -253,8 +314,11 @@ void search(int value, LinkedList *list)
 
 void update(int value, int index, LinkedList *list)
 {
-    if (index < 0)
+    if (index >= list->size)
+    {
+        printf("Invalid Index!! \n");
         return;
+    }
 
     if (list->head == NULL)
     {
@@ -262,27 +326,41 @@ void update(int value, int index, LinkedList *list)
         return;
     }
 
-    int count = 0;
-    Node *temp = list->head;
+    int mid = list->size / 2;
+    int dir = mid - index;
 
-    while (temp != NULL && count < index)
+    if (dir >= 0 || dir == mid)
     {
-        temp = temp->next;
-        count++;
+        int count = 0;
+        Node *temp = list->head;
+
+        while (count != mid && count < index)
+        {
+            temp = temp->next;
+            count++;
+        }
+
+        temp->data = value;
     }
 
-    if (temp == NULL)
+    else
     {
-        printf("Invalid Index!! \n");
-        return;
-    }
+        int count = list->size;
+        Node *temp = list->tail;
 
-    temp->data = value;
+        while (count != mid && count > index)
+        {
+            temp = temp->prev;
+            count--;
+        }
+
+        temp->data = value;
+    }
 }
 
 void reverseList(LinkedList *list)
 {
-    
+
     Node *curr = list->head;
 
     while (curr != NULL)
@@ -301,8 +379,7 @@ void reverseList(LinkedList *list)
     list->tail = temp;
 }
 
-
-void reverse(LinkedList *list)
+void reverseData(LinkedList *list)
 {
 
     Node *left = list->head;
@@ -316,9 +393,7 @@ void reverse(LinkedList *list)
 
         left = left->next;
         right = right->prev;
-        
     }
-    
 }
 
 void cleanup(LinkedList *list)
@@ -342,7 +417,7 @@ void displayList(LinkedList *list)
     }
     printf("NULL \n");
 
-    // List in reverse  
+    // List in reverse
     // temp = list->tail;
 
     // while (temp)
@@ -351,41 +426,35 @@ void displayList(LinkedList *list)
     //     temp = temp->prev;
     // }
     // printf("NULL \n");
-
-
 }
-
 
 int main()
 {
     LinkedList List = {NULL, NULL, 0};
 
-    insertAtBeginning(30, &List);
-    insertAtBeginning(20, &List);
     insertAtBeginning(10, &List);
+    insertAtEnd(30, &List);
 
+    insertAtPosition(20, 1, &List);
     insertAtEnd(50, &List);
-
     insertAtPosition(40, 3, &List);
 
-    insertAtEnd(55, &List);
-    insertAtEnd(66, &List);
-    insertAtPosition(60, 5, &List);
     insertAtBeginning(5, &List);
-    
-    
-    displayList(&List);
+    insertAtEnd(60, &List);
 
     deleteStart(&List);
-    deleteAtPosition(6, &List);
     deleteEnd(&List);
 
     displayList(&List);
 
-    printf("\n");
-    reverseList(&List);
+    insertAtPosition(7, 3, &List);
+
     displayList(&List);
-    
+
+    deleteAtPosition(3, &List);
+
+    displayList(&List);
+
     printf("The length of Linked List is %d \n", length(&List));
 
     cleanup(&List);
