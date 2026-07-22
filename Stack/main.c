@@ -3,17 +3,43 @@
 #include <stdbool.h>
 
 #define MAX_SIZE 50
+#define initialCap 2
 
 typedef struct Stack
 {
-    int data[MAX_SIZE];
+    int *data;
     int top;
+    int size;
+    int capacity;
 } Stack;
 
 // Initialzation
 void initStack(Stack *stack)
 {
     stack->top = -1;
+    stack->size = 0;
+    stack->capacity = initialCap;
+    stack->data = malloc(initialCap * sizeof(int));
+
+    if (!stack->data)
+    {
+        printf("malloc failed\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+// Reallocation
+int *resize(Stack *stack)
+{
+    int *temp = realloc(stack->data, stack->capacity);
+
+    if (!stack->data)
+    {
+        printf("malloc failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return temp;
 }
 
 // Length Check
@@ -24,7 +50,7 @@ bool isEmpty(Stack *stack)
 
 bool isFull(Stack *stack)
 {
-    return stack->top == MAX_SIZE - 1;
+    return stack->top == stack->capacity - 1;
 }
 
 // Push(Adding on the top)
@@ -36,7 +62,14 @@ void push(Stack *stack, int value)
         return;
     }
 
+    if (stack->size == stack->capacity)
+    {
+        stack->capacity *= 2;
+        stack->data = resize(stack->data);
+    }
+
     stack->data[++stack->top] = value;
+    stack->size++;
 }
 
 // Pop(Deleting the top)
@@ -48,7 +81,7 @@ void pop(Stack *stack)
         return;
     }
 
-    stack->top--;
+    stack->size--;
 }
 
 // Displaying the top element
@@ -82,20 +115,7 @@ int main()
 {
     Stack stack;
 
-    isEmpty(&stack);
     initStack(&stack);
-
-    push(&stack, 10);
-    push(&stack, 20);
-    push(&stack, 30);
-    push(&stack, 40);
-
-    peek(&stack);
-    pop(&stack);
-  
-    printf("\n");
-
-    display(&stack);
 
     return 0;
 }
