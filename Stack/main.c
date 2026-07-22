@@ -25,7 +25,6 @@ bool isFull(Stack *stack)
     return stack->top == MAX_SIZE - 1;
 }
 
-
 void push(Stack *stack, int value)
 {
     if (stack->top == MAX_SIZE - 1)
@@ -38,6 +37,17 @@ void push(Stack *stack, int value)
 }
 
 
+void peek(Stack *stack)
+{
+    if (isEmpty(stack))
+    {
+        printf("Stack Underflow\n");
+        return;
+    }
+
+    printf("%d \n", stack->data[stack->top]);
+}
+
 int main()
 {
     Stack stack;
@@ -46,6 +56,7 @@ int main()
     initStack(&stack);
 
     push(&stack, 30);
+    peek(&stack);
 
     return 0;
 }
