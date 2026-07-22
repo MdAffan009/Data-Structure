@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define MAX_SIZE 50
-#define initialCap 2
+#define MAX_CAP 128
+#define iNITIAL_CAP 2
 
 typedef struct Stack
 {
@@ -18,8 +18,8 @@ void initStack(Stack *stack)
 {
     stack->top = -1;
     stack->size = 0;
-    stack->capacity = initialCap;
-    stack->data = malloc(initialCap * sizeof(int));
+    stack->capacity = iNITIAL_CAP;
+    stack->data = malloc(iNITIAL_CAP * sizeof(int));
 
     if (!stack->data)
     {
@@ -31,9 +31,14 @@ void initStack(Stack *stack)
 // Reallocation
 int *resize(Stack *stack)
 {
-    int *temp = realloc(stack->data, stack->capacity);
+    if (stack->capacity >= MAX_CAP)
+    {
+        stack->size = MAX_CAP;
+    }
 
-    if (!stack->data)
+    int *temp = realloc(stack->data, stack->capacity * sizeof(int));
+
+    if (!temp)
     {
         printf("malloc failed\n");
         exit(EXIT_FAILURE);
@@ -50,7 +55,7 @@ bool isEmpty(Stack *stack)
 
 bool isFull(Stack *stack)
 {
-    return stack->top == stack->capacity - 1;
+    return stack->size == MAX_CAP;
 }
 
 // Push(Adding on the top)
@@ -65,7 +70,7 @@ void push(Stack *stack, int value)
     if (stack->size == stack->capacity)
     {
         stack->capacity *= 2;
-        stack->data = resize(stack->data);
+        stack->data = resize(stack);
     }
 
     stack->data[++stack->top] = value;
@@ -81,6 +86,7 @@ void pop(Stack *stack)
         return;
     }
 
+    stack->top--;
     stack->size--;
 }
 
@@ -116,6 +122,17 @@ int main()
     Stack stack;
 
     initStack(&stack);
+    push(&stack, 40);
+    push(&stack, 30);
+    push(&stack, 20);
+    push(&stack, 10);
+
+    display(&stack);
+
+    pop(&stack);
+    peek(&stack);
+
+    free(stack.data);
 
     return 0;
 }
