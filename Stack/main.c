@@ -25,11 +25,27 @@ bool isFull(Stack *stack)
     return stack->top == MAX_SIZE - 1;
 }
 
+
+void push(Stack *stack, int value)
+{
+    if (stack->top == MAX_SIZE - 1)
+    {
+        printf("Stack Overflow!! \n");
+        return;
+    }
+
+    stack->data[++stack->top] = value;
+}
+
+
 int main()
 {
     Stack stack;
 
     isEmpty(&stack);
     initStack(&stack);
+
+    push(&stack, 30);
+
     return 0;
 }
