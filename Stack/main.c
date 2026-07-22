@@ -33,7 +33,7 @@ int *resize(Stack *stack)
 {
     if (stack->capacity >= MAX_CAP)
     {
-        stack->size = MAX_CAP;
+        stack->capacity = MAX_CAP;
     }
 
     int *temp = realloc(stack->data, stack->capacity * sizeof(int));
@@ -58,8 +58,24 @@ bool isFull(Stack *stack)
     return stack->size == MAX_CAP;
 }
 
+// Validation
+void sizeValidation(Stack *stack, bool (*operation)(Stack *stack))
+{
+
+    bool result = operation(stack);
+
+    if (operation == isEmpty)
+    {
+        printf(result ? "The Stack is Empty!!\n" : "The Stack isn't Empty.\n");
+    }
+    else if (operation == isFull)
+    {
+        printf(result ? "The Stack is Full!!\n" : "The Stack isn't Full.\n");
+    }
+}
+
 // Push(Adding on the top)
-void push(Stack *stack, int value)
+void push(Stack *stack)
 {
     if (isFull(stack))
     {
@@ -72,6 +88,10 @@ void push(Stack *stack, int value)
         stack->capacity *= 2;
         stack->data = resize(stack);
     }
+
+    int value;
+    printf("Please Enter the value: ");
+    scanf("%d", &value);
 
     stack->data[++stack->top] = value;
     stack->size++;
@@ -117,22 +137,76 @@ void display(Stack *stack)
     }
 }
 
-int main()
+void interface()
 {
     Stack stack;
 
     initStack(&stack);
-    push(&stack, 40);
-    push(&stack, 30);
-    push(&stack, 20);
-    push(&stack, 10);
 
-    display(&stack);
+    int choice;
 
-    pop(&stack);
-    peek(&stack);
+    printf("Greetings!!");
+
+    while (true)
+    {
+        printf("\n=================================\n");
+        printf("         STACK OPERATIONS\n");
+        printf("=================================\n");
+        printf("1. Push\t\t2. Pop\n");
+        printf("3. Is Empty\t4. Is Full\n");
+        printf("5. Peek\t\t6. Display\n");
+        printf("0. Exit\n");
+        printf("=================================\n");
+
+        printf("Choose an option: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+        case 0:
+            printf("Thanks for using this software!\n");
+            break;
+
+        case 1:
+            push(&stack);
+            printf("Operation Successful!");
+            continue;
+
+        case 2:
+            pop(&stack);
+            printf("Operation Successful!!");
+            continue;
+
+        case 3:
+            sizeValidation(&stack, isEmpty);
+            continue;
+
+        case 4:
+            sizeValidation(&stack, isFull);
+            continue;
+
+        case 5:
+            peek(&stack);
+            continue;
+
+        case 6:
+            display(&stack);
+            continue;
+
+        default:
+            printf("Invalid Option try again! \n");
+            continue;
+        }
+
+        break;
+    }
 
     free(stack.data);
+}
+
+int main()
+{
+    interface();
 
     return 0;
 }
