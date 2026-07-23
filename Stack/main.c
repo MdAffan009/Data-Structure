@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 #define MAX_CAP 128
-#define iNITIAL_CAP 2
+#define INITIAL_CAP 2
 
 typedef struct Stack
 {
@@ -18,12 +18,12 @@ void initStack(Stack *stack)
 {
     stack->top = -1;
     stack->size = 0;
-    stack->capacity = iNITIAL_CAP;
-    stack->data = malloc(iNITIAL_CAP * sizeof(int));
+    stack->capacity = INITIAL_CAP;
+    stack->data = malloc(INITIAL_CAP * sizeof(int));
 
     if (!stack->data)
     {
-        printf("malloc failed\n");
+        printf("relloc failed\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -31,11 +31,6 @@ void initStack(Stack *stack)
 // Reallocation
 int *resize(Stack *stack)
 {
-    if (stack->capacity >= MAX_CAP)
-    {
-        stack->capacity = MAX_CAP;
-    }
-
     int *temp = realloc(stack->data, stack->capacity * sizeof(int));
 
     if (!temp)
@@ -58,24 +53,8 @@ bool isFull(Stack *stack)
     return stack->size == MAX_CAP;
 }
 
-// Validation
-void sizeValidation(Stack *stack, bool (*operation)(Stack *stack))
-{
-
-    bool result = operation(stack);
-
-    if (operation == isEmpty)
-    {
-        printf(result ? "The Stack is Empty!!\n" : "The Stack isn't Empty.\n");
-    }
-    else if (operation == isFull)
-    {
-        printf(result ? "The Stack is Full!!\n" : "The Stack isn't Full.\n");
-    }
-}
-
 // Push(Adding on the top)
-void push(Stack *stack)
+void push(Stack *stack, int value)
 {
     if (isFull(stack))
     {
@@ -85,41 +64,44 @@ void push(Stack *stack)
 
     if (stack->size == stack->capacity)
     {
-        stack->capacity *= 2;
+        if (stack->capacity * 2 > MAX_CAP)
+            stack->capacity = MAX_CAP;
+        else
+            stack->capacity *= 2;
+
         stack->data = resize(stack);
     }
-
-    int value;
-    printf("Please Enter the value: ");
-    scanf("%d", &value);
 
     stack->data[++stack->top] = value;
     stack->size++;
 }
 
 // Pop(Deleting the top)
-void pop(Stack *stack)
+int pop(Stack *stack)
 {
     if (isEmpty(stack))
     {
         printf("Stack Underflow\n");
-        return;
+        return -1;
     }
 
+    int value = stack->data[stack->top];
     stack->top--;
     stack->size--;
+
+    return value;
 }
 
 // Displaying the top element
-void peek(Stack *stack)
+int peek(Stack *stack)
 {
     if (isEmpty(stack))
     {
         printf("Stack Underflow\n");
-        return;
+        return -1;
     }
 
-    printf("%d \n", stack->data[stack->top]);
+    return stack->data[stack->top];
 }
 
 // Traversing through stack
@@ -131,9 +113,11 @@ void display(Stack *stack)
         return;
     }
 
+    printf("Stack:\n");
+
     for (int i = stack->top; i >= 0; i--)
     {
-        printf("%d\n", stack->data[i]);
+        printf("| %d |\n", stack->data[i]);
     }
 }
 
@@ -168,25 +152,32 @@ void interface()
             break;
 
         case 1:
-            push(&stack);
+            int value;
+            printf("Please Enter the value: ");
+            if (scanf("%d", &choice) != 1)
+            {
+                printf("Invalid input\n");
+                break;
+            }
+
+            push(&stack, value);
             printf("Operation Successful!");
             continue;
 
         case 2:
-            pop(&stack);
-            printf("Operation Successful!!");
+            printf("Successfully delted %d !!", pop(&stack));
             continue;
 
         case 3:
-            sizeValidation(&stack, isEmpty);
+            printf(isEmpty(&stack) ? "The Stack is empty" : "The Stack isn't empty");
             continue;
 
         case 4:
-            sizeValidation(&stack, isFull);
+            printf(isFull(&stack) ? "The Stack is Full" : "The Stack isn't Full");
             continue;
 
         case 5:
-            peek(&stack);
+            printf("%d ", peek(&stack));
             continue;
 
         case 6:
